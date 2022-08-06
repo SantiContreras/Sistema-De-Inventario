@@ -1,7 +1,8 @@
 package com.santilasconi.inventory.services;
 
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 
 import javax.transaction.Transactional;
 
@@ -13,6 +14,8 @@ import org.springframework.stereotype.Service;
 import com.santilasconi.inventory.dao.ICategoryDao;
 import com.santilasconi.inventory.models.Category;
 import com.santilasconi.inventory.response.CategoryResponseRest;
+
+
 
 @Service
 public class CategoryServiceImp implements ICategoryService{
@@ -34,5 +37,32 @@ public class CategoryServiceImp implements ICategoryService{
 		
 		return new ResponseEntity<CategoryResponseRest>(response , HttpStatus.OK);
 	}
+
+	@Override
+	@Transactional()
+	public ResponseEntity<CategoryResponseRest> searchById(Long id) {
+		CategoryResponseRest response = new CategoryResponseRest();
+		ArrayList<Category> list = new ArrayList<>();
+		try {
+			Optional<Category> category = categorydao.findById(id);
+			if (category.isPresent()) {
+				list.add(category.get());
+				response.getCategoryresponse().setCategorys(list);
+				response.setMetadata("", "-1", "Respuesta ok");
+			} else {
+				response.setMetadata("", "-1", "Eror al consultar la categoria");
+				return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.NOT_FOUND);
+			}
+		} catch (Exception e) {
+			response.setMetadata("", "-1", "Eror al consultar la categoria");
+			return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<CategoryResponseRest>(response , HttpStatus.OK);
+	}
+	
+	
+	
+	
 
 }
