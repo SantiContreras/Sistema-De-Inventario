@@ -121,7 +121,7 @@ public class CategoryServiceImp implements ICategoryService{
 		   response.setMetadata("", "-1", "Se ha eliminado la categoria correctammente");
 			
 		} catch (Exception e) {
-			response.setMetadata("", "-1", "Erro al actualizar la categoria");
+			response.setMetadata("", "-1", "Erro al eliminar  la categoria");
 			return new ResponseEntity<CategoryResponseRest>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
