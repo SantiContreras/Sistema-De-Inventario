@@ -72,7 +72,7 @@ public class ProductServiceImp implements IProductService {
 
 
 	@Override
-	public ResponseEntity<ProductResponseRest> serachById(Long id) {
+	public ResponseEntity<ProductResponseRest> serachById(Long id) { 
 		
 		ProductResponseRest response = new ProductResponseRest(); // va a ser una lista de producto
 		List<Product> list = new ArrayList<>();
@@ -94,6 +94,39 @@ public class ProductServiceImp implements IProductService {
 		} catch (Exception e) {
 			e.getStackTrace();
 			response.setMetadata("respuesta NO ok", "-1", "error al guardar el producto");
+			return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+
+		return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
+	}
+	
+	@Override
+	@Transactional
+	public ResponseEntity<ProductResponseRest> searchByName(String name){
+		ProductResponseRest response = new ProductResponseRest(); // va a ser una lista de producto
+		List<Product> list = new ArrayList<>();
+		List<Product> listAux = new ArrayList<>();
+		// buscamos la categoria para el producto
+		try {
+			listAux = productodao.findByNameContainingIgnoreCase(name);
+			
+			if (listAux.size() > 0) {
+				listAux.stream().forEach((p)->{
+					byte[] imagedescompressed = Util.decompressZLib(p.getPicture());
+					p.setPicture(imagedescompressed);
+					list.add(p); // obtengo el producto en su totalidad y lo agrego a la lista
+					response.getPro().setProducts(list);//seteo el producto con las lista.
+					response.setMetadata("respuesta ok", "00", "productos  encontrados");
+				});
+			} else {
+				response.setMetadata("respuesta NO ok", "-1", "productos NO encontrados");
+				return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
+			}
+
+			
+		} catch (Exception e) {
+			e.getStackTrace();
+			response.setMetadata("respuesta NO ok", "-1", "error al buscar un producto");
 			return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
