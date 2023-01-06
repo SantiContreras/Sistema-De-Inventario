@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,6 +81,30 @@ public class ProductRestController {
 	public ResponseEntity<ProductResponseRest> search(){
 		ResponseEntity<ProductResponseRest> response = productService.search();
 		return response;
+	}
+	
+	@PutMapping("/Products/{id}")
+	public ResponseEntity<ProductResponseRest> update(
+			
+			@RequestParam("name") String name,
+			@RequestParam("prince") int prince,
+			@RequestParam("account") int account,		
+			@RequestParam("picture") MultipartFile picture,
+			@RequestParam("categoryId") Long categoryId,
+			@PathVariable Long id
+			) throws Exception{
+				
+				
+				Product producto = new Product();
+				producto.setName(name);
+				producto.setPrice(prince);
+				producto.setAccount(account);
+				//comprimo la foto
+				producto.setPicture(Util.compressZLib(picture.getBytes()));
+				
+				ResponseEntity<ProductResponseRest> response = productService.update(producto, categoryId , id);
+				
+				return response;
 	}
 		
 	
