@@ -9,5 +9,5 @@ import lombok.Data;
 @Data
 public class ProductResponse {
     
-	  List<Product> products;
+	List<Product> products;
 }

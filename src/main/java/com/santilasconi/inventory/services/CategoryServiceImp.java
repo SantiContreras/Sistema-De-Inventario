@@ -29,7 +29,7 @@ public class CategoryServiceImp implements ICategoryService{
 		CategoryResponseRest response = new CategoryResponseRest();
 		try {
 			List<Category> category = (List<Category>) categorydao.findAll();
-			response.getCategoryresponse().setCategorys(category);
+			response.getCategoryResponse().setCategory(category);
 			response.setMetadata("Respuesta ok", "001", "Respuesta con exito");
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -47,7 +47,7 @@ public class CategoryServiceImp implements ICategoryService{
 			Optional<Category> category = categorydao.findById(id);
 			if (category.isPresent()) {
 				list.add(category.get());
-				response.getCategoryresponse().setCategorys(list);
+				response.getCategoryResponse().setCategory(list);
 				response.setMetadata("", "-1", "Respuesta ok");
 			} else {
 				response.setMetadata("", "-1", "Eror al consultar la categoria");
@@ -70,7 +70,7 @@ public class CategoryServiceImp implements ICategoryService{
 			Category nuevacategoria = categorydao.save(category);
 			if (nuevacategoria != null) {
 			   list.add(nuevacategoria);
-			   response.getCategoryresponse().setCategorys(list);
+			   response.getCategoryResponse().setCategory(list);
 			}
 		} catch (Exception e) {
 			response.setMetadata("", "-1", "Eror al guardar la categoria");
@@ -94,7 +94,7 @@ public class CategoryServiceImp implements ICategoryService{
 				
 				if (categoryacutalizada != null) {
 					list.add(categoryacutalizada);
-					response.getCategoryresponse().setCategorys(list);
+					response.getCategoryResponse().setCategory(list);
 					response.setMetadata("Respuesta ok", "-1", "Respuesta ok");
 				}else {
 					response.setMetadata("", "-1", "Erro al actualizar la categoria");

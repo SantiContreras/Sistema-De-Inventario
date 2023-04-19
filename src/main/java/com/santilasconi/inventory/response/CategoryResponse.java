@@ -9,5 +9,5 @@ import lombok.Data;
 @Data
 public class CategoryResponse { //nos retorna una lista
 
-	private List<Category> categorys;
+	private List<Category> category;
 }

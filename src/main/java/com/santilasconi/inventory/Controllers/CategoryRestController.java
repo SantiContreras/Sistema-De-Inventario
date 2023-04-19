@@ -1,5 +1,7 @@
 package com.santilasconi.inventory.Controllers;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.santilasconi.inventory.models.Category;
 import com.santilasconi.inventory.response.CategoryResponseRest;
 import com.santilasconi.inventory.services.ICategoryService;
+import com.santilasconi.inventory.util.CategoryExelExport;
 
 @CrossOrigin(origins= {"http://localhost:4200"})
 @RestController
@@ -69,6 +72,18 @@ public class CategoryRestController {
 
 		ResponseEntity<CategoryResponseRest> response = service.deleteById( id);
 		return response;
+	}
+	
+	@GetMapping("/categories/exportexcel")
+	public void exportToExcel(HttpServletResponse response) throws Exception {
+		response.setContentType("aplication/octet-stream");
+		String headerKey = "Content-Disposition";
+		String headerValue = "attachment;filename=result_category";
+		response.setHeader(headerKey, headerValue);
+		
+		ResponseEntity<CategoryResponseRest> categoryResponse = service.search();
+		CategoryExelExport excelExport = new CategoryExelExport(categoryResponse.getBody().getCategoryResponse().getCategory());
+		excelExport.export(response);
 	}
 
 }

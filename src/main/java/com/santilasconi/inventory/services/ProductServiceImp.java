@@ -50,7 +50,7 @@ public class ProductServiceImp implements IProductService {
 
 			if (ProductSave != null) {
 				list.add(ProductSave);
-				response.getPro().setProducts(list);// seteo la lista de producto
+				response.getProduct().setProducts(list);// seteo la lista de producto
 				response.setMetadata("respuesta ok", "00", "Categoria  encontrada");
 			} else {
 				response.setMetadata("respuesta NO ok", "-1", "Producto NO guardado");
@@ -77,7 +77,7 @@ public class ProductServiceImp implements IProductService {
 				byte[] imagedescompressed = Util.decompressZLib(product.get().getPicture());
 				product.get().setPicture(imagedescompressed);
 				list.add(product.get()); // obtengo el producto en su totalidad y lo agrego a la lista
-				response.getPro().setProducts(list);// seteo el producto con las lista.
+				response.getProduct().setProducts(list);// seteo el producto con las lista.
 				response.setMetadata("respuesta ok", "00", "producto  encontrado");
 			} else {
 				response.setMetadata("respuesta NO ok", "-1", "producto NO encontrado");
@@ -108,7 +108,7 @@ public class ProductServiceImp implements IProductService {
 					byte[] imagedescompressed = Util.decompressZLib(p.getPicture());
 					p.setPicture(imagedescompressed);
 					list.add(p); // obtengo el producto en su totalidad y lo agrego a la lista
-					response.getPro().setProducts(list);// seteo el producto con las lista.
+					response.getProduct().setProducts(list);// seteo el producto con las lista.
 					response.setMetadata("respuesta ok", "00", "productos  encontrados");
 				});
 			} else {
@@ -126,7 +126,7 @@ public class ProductServiceImp implements IProductService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional()
 	public ResponseEntity<ProductResponseRest> deleteById(Long id) {
 		ProductResponseRest response = new ProductResponseRest(); // va a ser una lista de producto
 
@@ -147,34 +147,42 @@ public class ProductServiceImp implements IProductService {
 	@Override
 	@Transactional(readOnly = true)
 	public ResponseEntity<ProductResponseRest> search() {
-		ProductResponseRest response = new ProductResponseRest(); // va a ser una lista de producto
+		ProductResponseRest response = new ProductResponseRest();
 		List<Product> list = new ArrayList<>();
 		List<Product> listAux = new ArrayList<>();
-		// buscamos la categoria para el producto
+		//search producto
+		listAux = (List<Product>) productodao.findAll();
+		
 		try {
-			listAux = (List<Product>) productodao.findAll();
-
-			if (listAux.size() > 0) {
-				listAux.stream().forEach((p) -> {
-					byte[] imagedescompressed = Util.decompressZLib(p.getPicture());
-					p.setPicture(imagedescompressed);
-					list.add(p); // obtengo el producto en su totalidad y lo agrego a la lista
-
+			
+			
+			
+			
+			if( listAux.size() > 0) {
+				
+				listAux.stream().forEach( (p) -> {
+					//byte[] imageDescompressed = Util.decompressZLib(p.getPicture());
+					//p.setPicture(imageDescompressed);
+					list.add(p);
 				});
-
-				response.getPro().setProducts(list);// seteo el producto con las lista.
-				response.setMetadata("respuesta ok", "00", "productos  encontrados");
+				
+				
+				response.getProduct().setProducts(list);
+				response.setMetadata("Respuesta ok", "00", "Productos encontrados");
+				
 			} else {
-				response.setMetadata("respuesta NO ok", "-1", "productos NO encontrados");
+				response.setMetadata("respuesta nok", "-1", "Productos no encontrados ");
 				return new ResponseEntity<ProductResponseRest>(response, HttpStatus.NOT_FOUND);
 			}
-
+			
+			
 		} catch (Exception e) {
 			e.getStackTrace();
-			response.setMetadata("respuesta NO ok", "-1", "error al buscar la lista de productos");
+			response.setMetadata("respuesta nok", "-1", "Error al buscar productos");
 			return new ResponseEntity<ProductResponseRest>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 
+		}
+		
 		return new ResponseEntity<ProductResponseRest>(response, HttpStatus.OK);
 	}
 
@@ -208,7 +216,7 @@ public class ProductServiceImp implements IProductService {
 				
 				if (productoActualizado != null) {
 					list.add(productoActualizado);
-					response.getPro().setProducts(list);;
+					response.getProduct().setProducts(list);;
 					response.setMetadata("respuesta ok", "00", "producto actualizado");
 				}else {
 					response.setMetadata("respuesta NO ok", "-1", "Producto NO actualizado");
